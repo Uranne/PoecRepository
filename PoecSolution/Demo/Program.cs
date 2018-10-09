@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace Demo
             sortie = shortnom.ToUpper() + shortpre;
             if (sortie.Length != 0)
             {
-                Clipboard.SetText(sortie);
+                //Clipboard.SetText(sortie);
                 Console.WriteLine("{0} {1}, félicitation, votre pseudo est {2}.", prenom, nom, sortie);
                 Console.WriteLine("Vous le trouverez dans le presse papier");
             }
@@ -120,10 +121,149 @@ namespace Demo
                 Console.WriteLine("Saisie incorrecte");
             }
 
-        } 
+        }
         #endregion
 
+        static void Ifstatment()
+        {
+            //après saisie de l'age et du nombre de trimestre déjà acquis
+            //Indiquer si la personne peut prendre sa retraite (+ de 62 ans et 172 trimestre)
+            //ou peut-etre faudra t'il attendre (moins de 62 ans)
+            //ou travailler (moins de 172 trimestre)
+            int age, nbreTrimestre;
+            String sAge, sNbreTri;
+            String result;
+            do
+            {
+                Console.WriteLine("Saisissez votre age : ");
+                sAge = Console.ReadLine();
+            } while (!int.TryParse(sAge, out age));
 
+            do
+            {
+                Console.WriteLine("Saisissez votre nombre de trimestre travaillé : ");
+                sNbreTri = Console.ReadLine();
+            } while (!int.TryParse(sNbreTri, out nbreTrimestre));
+
+            if (age > 61 && nbreTrimestre > 171)
+            {
+                result = "Félicitation, profitez bien de votre retraite";
+            }
+            else
+            {
+                result = "Dommage \n";
+                if (nbreTrimestre < 172)
+                {
+                    result += "Il vous manque encore " + (172 - nbreTrimestre) + " trimestres.\n";
+                }
+                if (age < 62)
+                {
+                    result += "Il vous manque encore " + (62 - age) + " années.\n";
+                }
+                Console.WriteLine(result);
+            }
+
+
+        }
+        static void Exercice2(String Path = @"C:\")
+        {
+            /*En récupérant le nbre de fichiers présents dans le chemin saisi par l'utilisateur
+             * On affichera le type de dossier en fonction du tableau suivant :
+             * +de 200 fichiers : denses
+             * +de 100 fichiers : Occupé
+             * +de 50 fichiers : Léger
+             * +de 10 fichiers : Sous-occupé
+             * -de 11 fichiers : Négligeable
+             * */
+            String Category;
+            DirectoryInfo di = new DirectoryInfo(Path);
+            if (!di.Exists)
+            {
+                Console.WriteLine("Le dossier cherché n'existe pas.");
+            }
+            else
+            {
+                if (di.GetFiles().Count() > 200)
+                {
+                    Category = "Dense";
+                }
+                else if (di.GetFiles().Count() > 100)
+                {
+                    Category = "Occupé";
+                }
+                else if (di.GetFiles().Count() > 50)
+                {
+                    Category = "Léger";
+                }
+                else if (di.GetFiles().Count() >= 10)
+                {
+                    Category = "Sous-Occupé";
+                }
+                else
+                {
+                    Category = "Négligeable";
+                }
+                Console.WriteLine("Le répertoire {0}, composé de {1} fichiers est concidéré comme {2}", Path, di.GetFiles().Count(), Category);
+            }
+
+
+
+        }
+        static void SwitchFunction()
+        {
+            string reponse;
+            int intCat;
+            do
+            {
+                Console.WriteLine("Saisir la catégorie (0, 1, 2, 3) (-1 pour quitter)");
+                reponse = Console.ReadLine();
+                if (int.TryParse(reponse, out intCat))
+                {
+                    switch ((Categories)intCat)
+                    {
+                        case Categories.Cadres:
+                            Console.WriteLine("La catégorie a ne vous permet pas d'accéder au niveau supérieur.");
+                            break;
+                        case Categories.AgentDeMaitrise:
+                            Console.WriteLine("La catégorie b ne vous permet que d'accéder au niveau 2.");
+                            break;
+                        case Categories.Employe:
+                            Console.WriteLine("La catégorie c vous permet l'inimaginable, d'ailleurs on l'a pas imaginé.");
+                            break;
+                        case Categories.Externe:
+                            Console.WriteLine("Trouver un truc à afficher");
+                            break;
+                        default:
+                            Console.WriteLine("Il me semblait bien que vous étiez hors catégorie.");
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Veuillez entrer un chiffre");
+                }
+
+            } while (intCat != -1);
+        }
+        static void Boucle()
+        {
+            StringBuilder s = new StringBuilder();
+            for (int i = 270; i >1 ; i--)
+            {
+                s.Append(char.ConvertFromUtf32(65+i));
+            }
+            Console.WriteLine(s);
+            s.Clear();
+            for (char i = 'a'; i <= 'z'; i++)
+            {
+                s.Append(i);
+            }
+            Console.WriteLine(s);
+        }
+        static void ExerciceBoucle()
+        {
+
+        }
 
         [STAThreadAttribute]
         static void Main(string[] args)
@@ -136,7 +276,11 @@ namespace Demo
             //Convertion(); 
             #endregion
 
-
+            //Ifstatment();
+            //Exercice2(@"C:\Windows\System32\");
+            //SwitchFunction();
+            //Boucle();
+            ExerciceBoucle();
         }
     }
 }

@@ -124,6 +124,7 @@ namespace Demo
         }
         #endregion
 
+        #region Jour 2
         static void Ifstatment()
         {
             //après saisie de l'age et du nombre de trimestre déjà acquis
@@ -248,9 +249,9 @@ namespace Demo
         static void Boucle()
         {
             StringBuilder s = new StringBuilder();
-            for (int i = 270; i >1 ; i--)
+            for (int i = 270; i > 1; i--)
             {
-                s.Append(char.ConvertFromUtf32(65+i));
+                s.Append(char.ConvertFromUtf32(65 + i));
             }
             Console.WriteLine(s);
             s.Clear();
@@ -262,8 +263,107 @@ namespace Demo
         }
         static void ExerciceBoucle()
         {
+            /*demander le chemin d'un nouveau à créer sur c:\
+             * Exploiter la classe directory.exists
+             * pour vérifier qu'il n'existe pas déjà
+             * créer le dossier à l'aide de la classe directory
+             * créer dans le nouveau dossier 10 fichiers nommé fichier1.txt à fichier10.txt
+             * 
+             * */
+            string rep;
+            Console.WriteLine(@"Donner le nom du dossier à créer dans ""C:\""");
+            rep = Console.ReadLine();
+            if (!Directory.Exists(@"C:\" + rep))
+            {
+                Directory.CreateDirectory(@"C:\" + rep);
+                for (int i = 0; i < 10; i++)
+                {
+                    StreamWriter flux = File.CreateText(@"C:\" + rep + @"\fichier" + (i + 1) + ".txt");
+                    flux.Dispose();
+                }
+                Console.ReadKey();
+                Directory.Delete(@"C:\" + rep, true);
+            }
+            else
+                Console.WriteLine("Votre dossier existe déjà");
 
         }
+        static void ExerciceWhile()
+        {
+            /*
+             * Faire saisir autant de fois que nécessaire jusqu'à obtention d'un nbre
+             * */
+
+            int nbre;
+            do
+            {
+                Console.WriteLine("Veuillez saisir un nombre.");
+            } while (!int.TryParse(Console.ReadLine(), out nbre));
+
+            Console.WriteLine("C'est bien, vous êtes docile.");
+        }
+        static void JeuNbreSecret()
+        {
+            // définir secret
+            int secret, compteur, choix, max;
+            string saisie;
+            Random r = new Random();
+
+            // Définir un compteur
+            compteur = 0;
+            //Définir un Message
+            do
+            {
+                Console.WriteLine("Définir la valeur maximum du secret.");
+            } while (!int.TryParse(Console.ReadLine(), out max));
+            string message = "Veuillez choisir un nombre entre 1 et " + max + " (0 pour sortir)";
+            secret = r.Next(1, max);
+            //Récupérer choix
+            do
+            {
+                Console.WriteLine(message);
+                saisie = Console.ReadLine();
+                if (saisie.Length > secret.ToString().Length)
+                {
+                    message = "Attention, n'écrivez pas un nombre trop grand";
+                    choix = 5;
+                }
+                else
+                {
+                    int.TryParse(saisie, out choix);
+                    if (choix > secret)
+                    {
+                        message = "Veuillez choisir un nombre plus petit (0 pour sortir)";
+                        compteur++;
+                    }
+                    else if (choix == 0)
+                    {
+                        message = "Vous avez abandonné en " + compteur + " essais. Tant pis !";
+                    }
+                    else if (choix < secret)
+                    {
+                        message = "Veuillez choisir un nombre plus grand (0 pour sortir)";
+                        compteur++;
+                    }
+                    else
+                    {
+                        compteur++;
+                        message = "Bien joué, vous avez gagné en " + compteur + " essais. Trop bien !";
+                        choix = 0;
+                    }
+                    // message = (Choix>secret)?"Choisir plus petit":"Choisir plus grand";
+                }
+            } while (choix != 0);
+            Console.WriteLine(message);
+            //Incrémenter compteur
+
+            //Conditionnnement de la suite
+            //-> CHoisir plus petit
+            //-> Choisir plus grand
+            //-> Bien joué
+
+        } 
+        #endregion
 
         [STAThreadAttribute]
         static void Main(string[] args)
@@ -276,11 +376,17 @@ namespace Demo
             //Convertion(); 
             #endregion
 
+            #region Jour 2
             //Ifstatment();
             //Exercice2(@"C:\Windows\System32\");
             //SwitchFunction();
             //Boucle();
-            ExerciceBoucle();
+            //ExerciceBoucle();
+            //ExerciceWhile();
+            //JeuNbreSecret();
+            #endregion
+            
+
         }
     }
 }

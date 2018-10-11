@@ -14,4 +14,29 @@ namespace Demo
             ,Externe
 
     }
+
+    enum Affichages
+    {
+        Clair,
+        Standard,
+        Sombre
+    }
+
+    enum Conversion
+    {
+        FtoC,
+        CtoF,
+        CtoK,
+        KtoC,
+        KtoF,
+        FtoK
+    }
+
+    enum TypeResultat
+    {
+        unEntier, 
+        unDouble, 
+        unFloat
+    }
+
 }

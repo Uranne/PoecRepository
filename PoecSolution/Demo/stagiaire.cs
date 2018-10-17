@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Demo
 {
-    class Stagiaire
+    public class Stagiaire
     {
         internal int Points;
 
-        internal void Observer()
+        public void Observer()
         {
             Console.WriteLine("Observation");
         }

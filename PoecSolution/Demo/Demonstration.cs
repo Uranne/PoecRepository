@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Tools;
+using Tools.Threads;
 
 namespace Demo
 {
     class Demonstration
     {
         static readonly string lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur in congue eros. Fusce hendrerit risus ante, quis consequat neque aliquam commodo. Etiam vel congue nisi, eget sagittis augue. Nam volutpat urna eu condimentum iaculis. Morbi aliquet lacinia ante sed tempor. ";
-        #region Module 1
 
+        #region Module 1
         #region Jour 1
 
         internal void Demo10()
@@ -404,9 +408,8 @@ namespace Demo
             }
         }
         #endregion
-
         #endregion
-        #region J3suite
+        #region J4
 
         internal void Demo40()
         {
@@ -471,6 +474,307 @@ namespace Demo
             Console.WriteLine("Moyenne(7, 40, 20, 54, 35, 89, 12)");
             Console.WriteLine(Moyenne(7, 40, 20, 54, 35, 89, 12));
         }
+        internal void Demo46()
+        {
+            try
+            {
+                File.OpenRead(@"C:\windows\test.txt");
+                Console.WriteLine("Suppression pas planté");
+            }
+
+            catch (DirectoryNotFoundException ex)
+            {
+                Console.WriteLine("Erreur de chemin");
+            }
+            catch (FileNotFoundException ex)
+            {
+                Trace.WriteLine("Erreur de chemin");
+                //Console.WriteLine("Erreur de chemin");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Suppression raté");
+                throw ex;
+            }
+        }
+
+        #endregion
+        #region J5
+
+        internal void Demo50()
+        {
+            //utilisation d'une structure
+            Formation f_csharp = new Formation(5);
+            Formation f_aspnet = f_csharp;
+            f_aspnet.Duree = 10;
+            Console.WriteLine("La durée de f_csharp est {0} et de f_aspnet {1}", f_csharp.Duree, f_aspnet.Duree);
+
+
+        }
+        internal void Demo51()
+        {
+            Formation f_csharp = new Formation();
+            f_csharp.Cout = -20;
+        }
+        internal void Demo52()
+        {
+            Formation f1 = new Formation();
+            Formation f2 = new Formation();
+            Formation f3 = new Formation();
+            f1.Titre = "Csharp";
+            f2.Titre = "Asp";
+            f3.Titre = "Agile";
+            //initialisation d'une liste
+            List<Formation> formations = new List<Formation>() { f1, f2 };
+            formations.Add(f3);
+
+            foreach (Formation f in formations)
+            {
+                Console.WriteLine(f.Titre);
+            }
+
+        }
+        internal void Demo53()
+        {
+            Formation f1 = new Formation();
+            Formation f2 = new Formation();
+            Formation f3 = new Formation();
+            f1.Titre = "Csharp";
+            f2.Titre = "Asp";
+            f3.Titre = "Agile";
+            //création d'un dictionnaire
+            Dictionary<string, Formation> dicFormations = new Dictionary<string, Formation>();
+            dicFormations.Add("M20483", f1);
+            dicFormations.Add("M20486", f2);
+            dicFormations.Add("GKAG03", f3);
+
+            //foreach (var item in dicFormations)
+            //{
+            //    Console.WriteLine(item.Key + "....." + item.Value.Titre);
+            //}
+            //Console.WriteLine(dicFormations["M20483"].Titre);
+
+            //Requêtes linq sur dictionary
+            //var resultat = from f in dicFormations
+            //               where f.Key.Substring(0, 1) == "M"
+            //               select new { f.Value };
+
+            var resultat = dicFormations
+                .Where(f => f.Key.Substring(0, 1) == "M")//ceci est une expression lambda
+                .Select(s => new { s.Value });
+
+            foreach (var item in resultat)
+            {
+                Console.WriteLine(item.Value.Titre);
+            }
+        }
+        internal void Demo54()
+        {
+            vehicule MaCaisse = new vehicule(30);
+            MaCaisse.Accelerer();
+            MaCaisse.Accelerer(20);
+            Console.WriteLine("MaCaisse roule à {0} km", MaCaisse.Vitesse);
+            Console.WriteLine(vehicule.GetPrefectureUrl());
+
+        }
+        #endregion
+        #region J6
+        internal void Demo60()
+        {
+            ILecteur l1 = new LecteurExclusif(@"c:\fichiers\f1.txt");
+            ILecteur l2 = new LecteurExclusif(@"c:\fichiers\f2.txt");
+            ILecteur l3 = new LecteurExclusif(@"c:\fichiers\f3.txt");
+            ILecteur l4 = new LecteurExclusif(@"c:\fichiers\f4.txt");
+
+            List<ILecteur> lstLecteurs = new List<ILecteur>() { l1, l2, l3, l4 };
+
+            //écriture
+            foreach (ILecteur l in lstLecteurs)
+            {
+                l.Ajouter();
+            }
+            ((LecteurExclusif)l1).Dispose();
+            ((LecteurExclusif)l2).Dispose();
+            ((LecteurExclusif)l3).Dispose();
+            ((LecteurExclusif)l4).Dispose();
+
+        }
+        internal void Demo61()
+        {
+            CompteCourant CC = new CompteCourant();
+            CompteEpargne CE = new CompteEpargne();
+            CompteAssVie CA1 = new CompteAssVie();
+            CompteAssVie CA2 = new CompteAssVie();
+
+            //Activité du compte courant :
+            CC.Deposer(500);
+            CC.Deposer(250);
+            CC.Retirer(120);
+            CC.RetirerFraisDeCarte();
+
+            //Activité du compte épargne :
+            CE.Deposer(3000);
+
+            //Activité du compte Ass vie 1
+            CA1.Deposer(5000);
+            CA1.Deposer(3000);
+            CA1.Retirer(1000);
+
+            //Activité du compte Ass vie 2
+            CA2.Deposer(3000);
+            CA2.Deposer(3000);
+            CA2.Retirer(5000);
+
+            //PorteFeuille de comptes au sein d'une liste
+            List<ICompte> lstPorteFeuille = new List<ICompte>() { CC, CE, CA1, CA2 };
+            double soldeTotal = 0;
+            foreach (ICompte item in lstPorteFeuille)
+            {
+                soldeTotal += item.Solde;
+                Console.WriteLine(soldeTotal);
+            }
+            Console.WriteLine("Le cumul des soldes des comptes donne : {0:N2}", soldeTotal);
+        }
+        internal void Demo62()
+        {
+            int[] valeurs = { 12, 14, 18, 19, 21 };
+            string[] sValeur = { "bl", "bla", "bli" };
+
+            foreach (int item in LaTrieuse.Retourner(valeurs))
+            {
+                Console.WriteLine(item);
+            }
+            foreach (string item in LaTrieuse.Retourner(sValeur))
+            {
+                Console.WriteLine(item);
+            }
+        }
+        #endregion
+        #region J7
+        internal void Demo70()
+        {
+            //Medecin mdcGeneraliste = new Medecin();
+            Angiologue angAngie = new Angiologue();
+            Cardiologue crdCardio = new Cardiologue();
+            Neurologue nrNeuro = new Neurologue();
+
+            //Console.WriteLine(mdcGeneraliste.Ausculter());
+            //Console.WriteLine(mdcGeneraliste.Orienter("Lucette"));
+            //Console.WriteLine(mdcGeneraliste.Facture(60));
+            //Console.WriteLine(mdcGeneraliste.Diagnostiquer());
+
+            //Console.WriteLine();
+
+            //Console.WriteLine(angAngie.Ausculter());
+            //Console.WriteLine(angAngie.Orienter("Lucien"));
+            //Console.WriteLine(angAngie.Facture(60));
+            //Console.WriteLine(angAngie.PratiquerDoppler());
+            //Console.WriteLine(angAngie.Diagnostiquer());
+
+            //Console.WriteLine();
+
+            //Console.WriteLine(crdCardio.Ausculter());
+            //Console.WriteLine(crdCardio.Orienter("Lucien"));
+            //Console.WriteLine(crdCardio.Facture(60));
+            //Console.WriteLine(crdCardio.PratiquerEC());
+            //Console.WriteLine(crdCardio.Diagnostiquer());
+
+            //Console.WriteLine();
+
+            //Console.WriteLine(nrNeuro.Ausculter());
+            //Console.WriteLine(nrNeuro.Orienter("lucien"));
+            //Console.WriteLine(nrNeuro.Facture(60));
+            //Console.WriteLine(nrNeuro.PratiquerEMG());
+            //Console.WriteLine(nrNeuro.Diagnostiquer());
+            //Console.WriteLine();
+
+            List<Medecin> mdcDocteurs = new List<Medecin>() { angAngie, crdCardio, nrNeuro };
+            foreach (Medecin m in mdcDocteurs)
+            {
+                Console.WriteLine(m.Ausculter());
+                Console.WriteLine(m.Orienter("Lucas"));
+                Console.WriteLine(m.Facture(60));
+                Console.WriteLine(m.Diagnostiquer());
+                Console.WriteLine(m.Former());
+
+                Console.WriteLine();
+            }
+        }
+        internal void Demo71()
+        {
+            Poec malek = new Poec("qqchose", "Malek");
+            MissPoec Amna = new MissPoec("qqchose", "Amna");
+            BoyPoec JP = new BoyPoec("qqchose", "JP");
+            List<Poec> lstPoec = new List<Poec>() { malek, Amna, JP };
+
+            /*
+             * Object initialiser :
+             * si il n'y avait pas de constructeur :
+             * Poec malek = new Poec() {Nom = "Placid", Prenom= "Malek"}
+             * 
+             * */
+
+            foreach (Poec p in lstPoec)
+            {
+                p.SuivreUnCours("DevWeb");
+                p.SuivreUnCours("C# et dotnet");
+                p.SuivreUnCours("J'apprends à voler");
+            }
+        }
+        internal void Demo72()
+        {
+            StringBuilder sbCon = new StringBuilder();
+            sbCon.Append("Coucouroucoucou");
+            sbCon.MettreEnMajuscules();
+            Console.WriteLine(sbCon.GetChaine());
+        }
+        #endregion
+        #region J8
+        internal void Demo80()
+        {
+            MultiThread mtLanceur = new MultiThread();
+            mtLanceur.Lancer();
+            do
+            {
+
+            } while (Console.ReadLine() != "0");
+        }
+        internal void Demo81()
+        {
+            Parallel.For(0, 10, (a) => { Thread.Sleep(((new Random())).Next(2, 7)); Console.WriteLine("Terminé pour {0}", a); });
+        } 
+        internal void Demo82()
+        {
+            //instantiation de la classe asynchrone
+            Asynchrone asLanceur = new Asynchrone();
+            //Appel de la méthode de lancement
+            asLanceur.Lancer();
+
+            //Activité de saisie dans la thread principal
+            while (Console.ReadLine() != "0")
+            {
+
+            }
+
+        }
+        internal void Demo83()
+        {
+            //Lancer la copie de tous les fichiers des dossiers suivants :
+            //c:\windows\system32
+            //c:\Programmes
+            //c:\Windows\Microsoft.NET
+
+            //dans un dossier archive
+            //La copie de chaque dossier doit faire l'objet d'une tache parallèle
+            //Lors de la fin d'un copie, une procédure nommé Copy_End doit afficher un message
+            //x fichiers copiés depuis chemin
+            string archive = @"C:\Archives";
+            Directory.CreateDirectory(archive);
+            CopierFichier cf = new CopierFichier();
+            cf.Lancer(archive, @"C:\Windows\system32", @"C:\Program Files", @"C:\Windows\Microsoft.NET");
+
+        }
+
         #endregion
 
         #region Mes Méthodes
@@ -582,7 +886,7 @@ namespace Demo
             } while (!ok);
             return retour;
         }
-        private double Moyenne(double ponderation, params double[] notes )
+        private double Moyenne(double ponderation, params double[] notes)
         {
             double cumul = 0;
             foreach (double d in notes)
@@ -590,9 +894,11 @@ namespace Demo
                 cumul += d;
             }
 
-            return (ponderation+cumul)/notes.Count();
+            return (ponderation + cumul) / notes.Count();
         }
+
+        #endregion
     }
 
-    #endregion
+
 }
